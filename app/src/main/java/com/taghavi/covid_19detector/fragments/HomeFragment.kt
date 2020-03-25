@@ -1,6 +1,7 @@
 package com.taghavi.covid_19detector.fragments
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -10,6 +11,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 
 import com.taghavi.covid_19detector.R
@@ -49,6 +51,40 @@ class HomeFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            CAMERA_ID -> {
+                when (resultCode) {
+                    Activity.RESULT_OK -> {
+                        val imageData = data!!.extras!!.get("data") as Bitmap
+
+                        storeImage(imageData)
+                    }
+                    Activity.RESULT_CANCELED -> {
+                        Toast.makeText(context, "You didn't get any shot", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            }
+            GALLERY_ID -> {
+                when (resultCode) {
+                    Activity.RESULT_OK -> {
+                        val contentURI = data!!.data
+                        val imageData =
+                            MediaStore.Images.Media.getBitmap(context!!.contentResolver, contentURI)
+
+                        storeImage(imageData)
+                    }
+                    Activity.RESULT_CANCELED -> {
+                        Toast.makeText(context, "You didn't select any photo", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            }
+        }
     }
 
     private fun storeImage(image: Bitmap) {
