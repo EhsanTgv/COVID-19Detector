@@ -103,12 +103,13 @@ class HomeFragment : Fragment() {
         val pictureFile: File?
         val androidVersion = Build.VERSION.SDK_INT
         if (androidVersion >= Build.VERSION_CODES.M) {
-            if (checkStoragePermission()){
-                //save picture
-            }else{
+            if (checkStoragePermission()) {
+                pictureFile = getOutputMediaFile()
+            } else {
                 //ask for permission
+                return
             }
-            pictureFile = getOutputMediaFile()
+
         } else {
             pictureFile = getOutputMediaFile()
         }
