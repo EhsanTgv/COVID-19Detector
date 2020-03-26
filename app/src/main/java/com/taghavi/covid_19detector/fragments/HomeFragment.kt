@@ -20,9 +20,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.taghavi.covid_19detector.R
 import com.taghavi.covid_19detector.databinding.FragmentHomeBinding
-import com.taghavi.covid_19detector.utilities.CAMERA_ID
-import com.taghavi.covid_19detector.utilities.GALLERY_ID
-import com.taghavi.covid_19detector.utilities.MyLog
+import com.taghavi.covid_19detector.utilities.*
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -45,9 +43,10 @@ class HomeFragment : Fragment() {
             val androidVersion = Build.VERSION.SDK_INT
             if (androidVersion >= Build.VERSION_CODES.M) {
                 if (checkCameraPermission()) {
-                    //intent to camera
+                    val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                    startActivityForResult(intent, CAMERA_ID)
                 } else {
-                    //ask for permission
+                    requestForCameraPermission()
                 }
             } else {
                 val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -107,7 +106,7 @@ class HomeFragment : Fragment() {
             if (checkStoragePermission()) {
                 pictureFile = getOutputMediaFile()
             } else {
-                //ask for permission
+                requestForStoragePermission()
                 return
             }
 
@@ -165,22 +164,22 @@ class HomeFragment : Fragment() {
 
     private fun requestForCameraPermission() {
         ActivityCompat.requestPermissions(
-            context,
+            activity!!,
             arrayOf(
                 Manifest.permission.CAMERA
             ),
-            101
+            CAMERA_PERMISSION_ID
         )
     }
 
     private fun requestForStoragePermission() {
         ActivityCompat.requestPermissions(
-            context,
+            activity!!,
             arrayOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             ),
-            101
+            GALLERY_PERMISSION_ID
         )
     }
 }
