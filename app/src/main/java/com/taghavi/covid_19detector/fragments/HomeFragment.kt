@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -162,4 +163,24 @@ class HomeFragment : Fragment() {
         return readResult == PackageManager.PERMISSION_GRANTED && writeResult == PackageManager.PERMISSION_GRANTED
     }
 
+    private fun requestForCameraPermission() {
+        ActivityCompat.requestPermissions(
+            context,
+            arrayOf(
+                Manifest.permission.CAMERA
+            ),
+            101
+        )
+    }
+
+    private fun requestForStoragePermission() {
+        ActivityCompat.requestPermissions(
+            context,
+            arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ),
+            101
+        )
+    }
 }
