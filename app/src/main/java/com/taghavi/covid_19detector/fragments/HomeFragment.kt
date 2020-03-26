@@ -1,8 +1,10 @@
 package com.taghavi.covid_19detector.fragments
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
@@ -12,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.taghavi.covid_19detector.R
@@ -40,7 +43,11 @@ class HomeFragment : Fragment() {
         binding.homeOpenCameraButton.setOnClickListener {
             val androidVersion = Build.VERSION.SDK_INT
             if (androidVersion >= Build.VERSION_CODES.M) {
-                //check camera permission here
+                if (checkCameraPermission()) {
+                    //intent to camera
+                } else {
+                    //ask for permission
+                }
             } else {
                 val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 startActivityForResult(intent, CAMERA_ID)
@@ -93,10 +100,14 @@ class HomeFragment : Fragment() {
     }
 
     private fun storeImage(image: Bitmap) {
-        val pictureFile:File?
+        val pictureFile: File?
         val androidVersion = Build.VERSION.SDK_INT
         if (androidVersion >= Build.VERSION_CODES.M) {
-            //check storage permission here
+            if (checkStoragePermission()){
+                //save picture
+            }else{
+                //ask for permission
+            }
             pictureFile = getOutputMediaFile()
         } else {
             pictureFile = getOutputMediaFile()
@@ -137,5 +148,17 @@ class HomeFragment : Fragment() {
         return mediaFile
     }
 
+    private fun checkCameraPermission(): Boolean {
+        val result: Int = ContextCompat.checkSelfPermission(context!!, Manifest.permission.CAMERA)
+        return result == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun checkStoragePermission(): Boolean {
+        val readResult: Int =
+            ContextCompat.checkSelfPermission(context!!, Manifest.permission.READ_EXTERNAL_STORAGE)
+        val writeResult: Int =
+            ContextCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        return readResult == PackageManager.PERMISSION_GRANTED && writeResult == PackageManager.PERMISSION_GRANTED
+    }
 
 }
