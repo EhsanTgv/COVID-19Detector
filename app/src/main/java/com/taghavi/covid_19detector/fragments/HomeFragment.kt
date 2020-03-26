@@ -4,16 +4,16 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-
+import androidx.fragment.app.Fragment
 import com.taghavi.covid_19detector.R
 import com.taghavi.covid_19detector.databinding.FragmentHomeBinding
 import com.taghavi.covid_19detector.utilities.CAMERA_ID
@@ -26,6 +26,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 class HomeFragment : Fragment() {
 
     override fun onCreateView(
@@ -37,9 +38,13 @@ class HomeFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
 
         binding.homeOpenCameraButton.setOnClickListener {
-            //check permission here
-            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            startActivityForResult(intent, CAMERA_ID)
+            val androidVersion = Build.VERSION.SDK_INT
+            if (androidVersion >= Build.VERSION_CODES.M) {
+                //check camera permission here
+            } else {
+                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                startActivityForResult(intent, CAMERA_ID)
+            }
         }
 
         binding.homeOpenGalleryButton.setOnClickListener {
@@ -88,7 +93,14 @@ class HomeFragment : Fragment() {
     }
 
     private fun storeImage(image: Bitmap) {
-        val pictureFile = getOutputMediaFile()
+        val pictureFile:File?
+        val androidVersion = Build.VERSION.SDK_INT
+        if (androidVersion >= Build.VERSION_CODES.M) {
+            //check storage permission here
+            pictureFile = getOutputMediaFile()
+        } else {
+            pictureFile = getOutputMediaFile()
+        }
 
         if (pictureFile == null) {
             MyLog.i("Error creating media file, check storage permissions:")
@@ -108,8 +120,9 @@ class HomeFragment : Fragment() {
 
     @SuppressLint("SimpleDateFormat")
     private fun getOutputMediaFile(): File? {
+        //add storage permission
         val mediaStoreDir =
-            File(Environment.getExternalStorageState() + "/Android/data/" + context!!.applicationContext.packageName + "/Files")
+            File(Environment.getExternalStorageState() + "/Android/data/data" + context!!.applicationContext.packageName)
 
         if (!mediaStoreDir.exists()) {
             if (!mediaStoreDir.mkdirs()) {
@@ -123,5 +136,6 @@ class HomeFragment : Fragment() {
         mediaFile = File(mediaStoreDir.path + File.separator + myImageName)
         return mediaFile
     }
+
 
 }
