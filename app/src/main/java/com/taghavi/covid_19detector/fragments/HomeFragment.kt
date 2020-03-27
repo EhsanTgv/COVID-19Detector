@@ -46,7 +46,7 @@ class HomeFragment : Fragment() {
                     val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                     startActivityForResult(intent, CAMERA_ID)
                 } else {
-                    requestForCameraPermission()
+                    requestForPermission(Manifest.permission.CAMERA)
                 }
             } else {
                 val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -108,7 +108,10 @@ class HomeFragment : Fragment() {
             ) {
                 pictureFile = getOutputMediaFile()
             } else {
-                requestForStoragePermission()
+                requestForPermission(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
                 return
             }
 
@@ -156,23 +159,10 @@ class HomeFragment : Fragment() {
         return result == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun requestForCameraPermission() {
+    private fun requestForPermission(vararg permissions: String) {
         ActivityCompat.requestPermissions(
             activity!!,
-            arrayOf(
-                Manifest.permission.CAMERA
-            ),
-            CAMERA_PERMISSION_ID
-        )
-    }
-
-    private fun requestForStoragePermission() {
-        ActivityCompat.requestPermissions(
-            activity!!,
-            arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ),
+            permissions,
             GALLERY_PERMISSION_ID
         )
     }
