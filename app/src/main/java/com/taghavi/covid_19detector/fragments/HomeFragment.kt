@@ -163,7 +163,36 @@ class HomeFragment : Fragment() {
         ActivityCompat.requestPermissions(
             activity!!,
             permissions,
-            GALLERY_PERMISSION_ID
+            STORAGE_PERMISSION_ID
         )
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            CAMERA_PERMISSION_ID -> {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                    startActivityForResult(intent, CAMERA_ID)
+                } else {
+                    Toast.makeText(
+                        context,
+                        "You have to give camera permission to take the shot",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+//            STORAGE_PERMISSION_ID->{
+//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    //granted
+//                } else {
+//                    //not granted
+//                }
+//            }
+        }
     }
 }
