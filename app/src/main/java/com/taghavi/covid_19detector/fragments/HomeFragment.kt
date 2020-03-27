@@ -42,7 +42,7 @@ class HomeFragment : Fragment() {
         binding.homeOpenCameraButton.setOnClickListener {
             val androidVersion = Build.VERSION.SDK_INT
             if (androidVersion >= Build.VERSION_CODES.M) {
-                if (checkCameraPermission()) {
+                if (checkPermission(Manifest.permission.CAMERA)) {
                     val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                     startActivityForResult(intent, CAMERA_ID)
                 } else {
@@ -103,7 +103,9 @@ class HomeFragment : Fragment() {
         val pictureFile: File?
         val androidVersion = Build.VERSION.SDK_INT
         if (androidVersion >= Build.VERSION_CODES.M) {
-            if (checkStoragePermission()) {
+            if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
+                checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            ) {
                 pictureFile = getOutputMediaFile()
             } else {
                 requestForStoragePermission()
@@ -149,17 +151,9 @@ class HomeFragment : Fragment() {
         return mediaFile
     }
 
-    private fun checkCameraPermission(): Boolean {
-        val result: Int = ContextCompat.checkSelfPermission(context!!, Manifest.permission.CAMERA)
+    private fun checkPermission(permission: String): Boolean {
+        val result: Int = ContextCompat.checkSelfPermission(context!!, permission)
         return result == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun checkStoragePermission(): Boolean {
-        val readResult: Int =
-            ContextCompat.checkSelfPermission(context!!, Manifest.permission.READ_EXTERNAL_STORAGE)
-        val writeResult: Int =
-            ContextCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        return readResult == PackageManager.PERMISSION_GRANTED && writeResult == PackageManager.PERMISSION_GRANTED
     }
 
     private fun requestForCameraPermission() {
