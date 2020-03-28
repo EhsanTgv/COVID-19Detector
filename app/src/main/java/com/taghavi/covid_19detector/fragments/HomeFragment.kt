@@ -3,6 +3,7 @@ package com.taghavi.covid_19detector.fragments
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -21,10 +22,7 @@ import androidx.fragment.app.Fragment
 import com.taghavi.covid_19detector.R
 import com.taghavi.covid_19detector.databinding.FragmentHomeBinding
 import com.taghavi.covid_19detector.utilities.*
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -61,6 +59,8 @@ class HomeFragment : Fragment() {
             )
             startActivityForResult(intent, GALLERY_ID)
         }
+
+        writeFileOnInternalStorage(context!!,"testFile","This is a temp Test")
 
         return binding.root
     }
@@ -195,4 +195,40 @@ class HomeFragment : Fragment() {
 //            }
         }
     }
+
+    private fun writeFileOnInternalStorage(context: Context, fileName: String, body: String) {
+        val file = File(context.filesDir, "myDir")
+        if (!file.exists()) {
+            file.mkdir()
+        }
+
+        try {
+            val myFile = File(file, fileName)
+            val writer = FileWriter(myFile)
+            writer.append(body)
+            writer.flush()
+            writer.close()
+        } catch (e: Exception) {
+            MyLog.i("HomeFragment -> writeFileOnInternalStorage -> $e")
+        }
+    }
+
+//    public void writeFileOnInternalStorage(Context mcoContext,String sFileName, String sBody){
+//        File file = new File(mcoContext.getFilesDir(),"mydir");
+//        if(!file.exists()){
+//            file.mkdir();
+//        }
+//
+//        try{
+//            File gpxfile = new File(file, sFileName);
+//            FileWriter writer = new FileWriter(gpxfile);
+//            writer.append(sBody);
+//            writer.flush();
+//            writer.close();
+//
+//        }catch (Exception e){
+//            e.printStackTrace();
+//
+//        }
+//    }
 }
