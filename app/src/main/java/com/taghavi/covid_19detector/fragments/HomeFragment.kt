@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -60,7 +61,7 @@ class HomeFragment : Fragment() {
             startActivityForResult(intent, GALLERY_ID)
         }
 
-        writeFileOnInternalStorage(context!!,"testFile","This is a temp Test")
+        writeFileOnInternalStorage(context!!, "testFile", "This is a temp Test")
 
         return binding.root
     }
@@ -73,7 +74,7 @@ class HomeFragment : Fragment() {
                     Activity.RESULT_OK -> {
                         val imageData = data!!.extras!!.get("data") as Bitmap
 
-                        storeImage(imageData)
+                        saveBitmapFile(imageData)
                     }
                     Activity.RESULT_CANCELED -> {
                         Toast.makeText(context, "You didn't get any shot", Toast.LENGTH_SHORT)
@@ -88,7 +89,7 @@ class HomeFragment : Fragment() {
                         val imageData =
                             MediaStore.Images.Media.getBitmap(context!!.contentResolver, contentURI)
 
-                        storeImage(imageData)
+                        saveBitmapFile(imageData)
                     }
                     Activity.RESULT_CANCELED -> {
                         Toast.makeText(context, "You didn't select any photo", Toast.LENGTH_SHORT)
@@ -213,22 +214,21 @@ class HomeFragment : Fragment() {
         }
     }
 
-//    public void writeFileOnInternalStorage(Context mcoContext,String sFileName, String sBody){
-//        File file = new File(mcoContext.getFilesDir(),"mydir");
-//        if(!file.exists()){
-//            file.mkdir();
-//        }
-//
-//        try{
-//            File gpxfile = new File(file, sFileName);
-//            FileWriter writer = new FileWriter(gpxfile);
-//            writer.append(sBody);
-//            writer.flush();
-//            writer.close();
-//
-//        }catch (Exception e){
-//            e.printStackTrace();
-//
-//        }
-//    }
+    private fun saveBitmapFile(image: Bitmap) {
+        val contextWrapper = ContextWrapper(context)
+        val directory = contextWrapper.getDir("imageDir", Context.MODE_PRIVATE)
+        val file = File(directory, "image.jpg")
+        if (!file.exists()) {
+            MyLog.i(file.toString())
+            var fileOutStream: FileOutputStream? = null
+            try {
+                fileOutStream = FileOutputStream(file)
+                image.compress(Bitmap.CompressFormat.JPEG, 100, fileOutStream)
+                fileOutStream.flush()
+                fileOutStream.close()
+            } catch (e: Exception) {
+                MyLog.i(e.toString())
+            }
+        }
+    }
 }
