@@ -41,11 +41,11 @@ class HomeFragment : Fragment() {
         binding.homeOpenCameraButton.setOnClickListener {
             val androidVersion = Build.VERSION.SDK_INT
             if (androidVersion >= Build.VERSION_CODES.M) {
-                if (checkPermission(Manifest.permission.CAMERA)) {
+                if (PermissionHandler.checkPermission(context!!, Manifest.permission.CAMERA)) {
                     val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                     startActivityForResult(intent, CAMERA_ID)
                 } else {
-                    requestForPermission(Manifest.permission.CAMERA)
+                    PermissionHandler.requestForPermission(activity!!, Manifest.permission.CAMERA)
                 }
             } else {
                 val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -73,12 +73,19 @@ class HomeFragment : Fragment() {
                     Activity.RESULT_OK -> {
                         val imageData = data!!.extras!!.get("data") as Bitmap
 
-                        if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
-                            checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        if (PermissionHandler.checkPermission(
+                                context!!,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            ) &&
+                            PermissionHandler.checkPermission(
+                                context!!,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            )
                         ) {
                             saveBitmapFile(imageData)
                         } else {
-                            requestForPermission(
+                            PermissionHandler.requestForPermission(
+                                activity!!,
                                 Manifest.permission.READ_EXTERNAL_STORAGE,
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE
                             )
@@ -98,12 +105,19 @@ class HomeFragment : Fragment() {
                         val imageData =
                             MediaStore.Images.Media.getBitmap(context!!.contentResolver, contentURI)
 
-                        if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
-                            checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        if (PermissionHandler.checkPermission(
+                                context!!,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            ) &&
+                            PermissionHandler.checkPermission(
+                                context!!,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            )
                         ) {
                             saveBitmapFile(imageData)
                         } else {
-                            requestForPermission(
+                            PermissionHandler.requestForPermission(
+                                activity!!,
                                 Manifest.permission.READ_EXTERNAL_STORAGE,
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE
                             )
@@ -117,19 +131,6 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-    }
-
-    private fun checkPermission(permission: String): Boolean {
-        val result: Int = ContextCompat.checkSelfPermission(context!!, permission)
-        return result == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun requestForPermission(vararg permissions: String) {
-        ActivityCompat.requestPermissions(
-            activity!!,
-            permissions,
-            STORAGE_PERMISSION_ID
-        )
     }
 
     override fun onRequestPermissionsResult(
@@ -160,7 +161,6 @@ class HomeFragment : Fragment() {
 //            }
         }
     }
-
 
     private fun saveBitmapFile(image: Bitmap) {
         val contextWrapper = ContextWrapper(context)
