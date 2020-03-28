@@ -13,11 +13,11 @@ class PermissionHandler {
             return result == PackageManager.PERMISSION_GRANTED
         }
 
-        fun requestForPermission(activity: Activity, vararg permissions: String) {
+        fun requestForPermission(activity: Activity, permissionId:Int ,vararg permissions: String) {
             ActivityCompat.requestPermissions(
                 activity,
                 permissions,
-                STORAGE_PERMISSION_ID
+                permissionId
             )
         }
     }

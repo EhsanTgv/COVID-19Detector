@@ -45,7 +45,10 @@ class HomeFragment : Fragment() {
                     val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                     startActivityForResult(intent, CAMERA_ID)
                 } else {
-                    PermissionHandler.requestForPermission(activity!!, Manifest.permission.CAMERA)
+                    PermissionHandler.requestForPermission(
+                        activity!!,
+                        CAMERA_PERMISSION_ID, Manifest.permission.CAMERA
+                    )
                 }
             } else {
                 val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -86,6 +89,7 @@ class HomeFragment : Fragment() {
                         } else {
                             PermissionHandler.requestForPermission(
                                 activity!!,
+                                STORAGE_PERMISSION_ID,
                                 Manifest.permission.READ_EXTERNAL_STORAGE,
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE
                             )
@@ -118,6 +122,7 @@ class HomeFragment : Fragment() {
                         } else {
                             PermissionHandler.requestForPermission(
                                 activity!!,
+                                STORAGE_PERMISSION_ID,
                                 Manifest.permission.READ_EXTERNAL_STORAGE,
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE
                             )
