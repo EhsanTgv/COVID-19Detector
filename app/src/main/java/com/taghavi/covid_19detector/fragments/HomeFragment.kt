@@ -61,7 +61,6 @@ class HomeFragment : Fragment() {
             startActivityForResult(intent, GALLERY_ID)
         }
 
-        writeFileOnInternalStorage(context!!, "testFile", "This is a temp Test")
 
         return binding.root
     }
@@ -74,7 +73,17 @@ class HomeFragment : Fragment() {
                     Activity.RESULT_OK -> {
                         val imageData = data!!.extras!!.get("data") as Bitmap
 
-                        saveBitmapFile(imageData)
+                        if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
+                            checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        ) {
+                            saveBitmapFile(imageData)
+                        } else {
+                            requestForPermission(
+                                Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            )
+                            return
+                        }
                     }
                     Activity.RESULT_CANCELED -> {
                         Toast.makeText(context, "You didn't get any shot", Toast.LENGTH_SHORT)
@@ -89,7 +98,17 @@ class HomeFragment : Fragment() {
                         val imageData =
                             MediaStore.Images.Media.getBitmap(context!!.contentResolver, contentURI)
 
-                        saveBitmapFile(imageData)
+                        if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
+                            checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        ) {
+                            saveBitmapFile(imageData)
+                        } else {
+                            requestForPermission(
+                                Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            )
+                            return
+                        }
                     }
                     Activity.RESULT_CANCELED -> {
                         Toast.makeText(context, "You didn't select any photo", Toast.LENGTH_SHORT)
@@ -98,61 +117,6 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-    }
-
-    private fun storeImage(image: Bitmap) {
-        val pictureFile: File?
-        val androidVersion = Build.VERSION.SDK_INT
-        if (androidVersion >= Build.VERSION_CODES.M) {
-            if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
-                checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            ) {
-                pictureFile = getOutputMediaFile()
-            } else {
-                requestForPermission(
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
-                return
-            }
-
-        } else {
-            pictureFile = getOutputMediaFile()
-        }
-
-        if (pictureFile == null) {
-            MyLog.i("Error creating media file, check storage permissions:")
-            return
-        }
-
-        try {
-            val fileOutputStream = FileOutputStream(pictureFile)
-            image.compress(Bitmap.CompressFormat.JPEG, 90, fileOutputStream)
-            fileOutputStream.close()
-        } catch (e: FileNotFoundException) {
-            MyLog.i("File not found: $e")
-        } catch (e: IOException) {
-            MyLog.i("Error accessing file: $e")
-        }
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    private fun getOutputMediaFile(): File? {
-        //add storage permission
-        val mediaStoreDir =
-            File(Environment.getExternalStorageState() + "/Android/data/data" + context!!.applicationContext.packageName)
-
-        if (!mediaStoreDir.exists()) {
-            if (!mediaStoreDir.mkdirs()) {
-                return null
-            }
-        }
-
-        val timeStamp = SimpleDateFormat("ddMMyyyy_HHmm").format(Date())
-        val mediaFile: File
-        val myImageName = "MyImage_$timeStamp.jpg"
-        mediaFile = File(mediaStoreDir.path + File.separator + myImageName)
-        return mediaFile
     }
 
     private fun checkPermission(permission: String): Boolean {
@@ -197,22 +161,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun writeFileOnInternalStorage(context: Context, fileName: String, body: String) {
-        val file = File(context.filesDir, "myDir")
-        if (!file.exists()) {
-            file.mkdir()
-        }
-
-        try {
-            val myFile = File(file, fileName)
-            val writer = FileWriter(myFile)
-            writer.append(body)
-            writer.flush()
-            writer.close()
-        } catch (e: Exception) {
-            MyLog.i("HomeFragment -> writeFileOnInternalStorage -> $e")
-        }
-    }
 
     private fun saveBitmapFile(image: Bitmap) {
         val contextWrapper = ContextWrapper(context)
