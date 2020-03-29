@@ -4,8 +4,10 @@ import android.content.Context
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.Response
+import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.taghavi.covid_19detector.utilities.Links
 import com.taghavi.covid_19detector.utilities.MyLog
 
 class VolleyApiService(private val context: Context) {
@@ -17,7 +19,17 @@ class VolleyApiService(private val context: Context) {
         val errorListener = Response.ErrorListener {
             MyLog.i("VolleyApiService -> uploadImageFile -> $it")
         }
-        val request = StringRequest(Request.Method.POST, "", listener, errorListener)
+        val request =
+            object : StringRequest(Method.POST, Links.uploadUrl, listener, errorListener) {
+                override fun parseNetworkError(volleyError: VolleyError?): VolleyError {
+                    var localVolleyError: VolleyError = volleyError!!
+                    if (localVolleyError.networkResponse != null && localVolleyError.networkResponse.data != null) {
+                        val error = VolleyError(String(localVolleyError.networkResponse.data))
+                        localVolleyError = error
+                    }
+                    return localVolleyError
+                }
+            }
         request.retryPolicy = DefaultRetryPolicy(
             DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
             DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
@@ -26,6 +38,6 @@ class VolleyApiService(private val context: Context) {
 
         val queue = Volley.newRequestQueue(context)
 
-        queue.add<String>(request)
+        queue.add(request)
     }
 }
