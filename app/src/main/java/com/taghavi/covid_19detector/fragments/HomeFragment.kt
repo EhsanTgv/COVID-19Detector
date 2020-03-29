@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.taghavi.covid_19detector.R
+import com.taghavi.covid_19detector.apiServices.VolleyApiService
 import com.taghavi.covid_19detector.databinding.FragmentHomeBinding
 import com.taghavi.covid_19detector.utilities.*
 import java.io.*
@@ -29,6 +30,7 @@ import java.util.*
 
 
 class HomeFragment : Fragment() {
+    private lateinit var volleyApiService: VolleyApiService
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,6 +40,18 @@ class HomeFragment : Fragment() {
         val binding: FragmentHomeBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
 
+        initialize()
+
+        events(binding)
+
+        return binding.root
+    }
+
+    private fun initialize() {
+        volleyApiService = VolleyApiService(context!!)
+    }
+
+    private fun events(binding: FragmentHomeBinding) {
         binding.homeOpenCameraButton.setOnClickListener {
             val androidVersion = Build.VERSION.SDK_INT
             if (androidVersion >= Build.VERSION_CODES.M) {
@@ -63,9 +77,6 @@ class HomeFragment : Fragment() {
             )
             startActivityForResult(intent, GALLERY_ID)
         }
-
-
-        return binding.root
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
