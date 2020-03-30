@@ -1,7 +1,6 @@
 package com.taghavi.covid_19detector.fragments
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -10,29 +9,28 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.taghavi.covid_19detector.R
 import com.taghavi.covid_19detector.apiServices.VolleyApiService
 import com.taghavi.covid_19detector.databinding.FragmentHomeBinding
 import com.taghavi.covid_19detector.utilities.*
+import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 import java.io.*
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -201,6 +199,31 @@ class HomeFragment : Fragment() {
                 MyLog.i(e.toString())
             }
         }
+    }
+
+    private fun uploadToServer(filePath: String) {
+        val retrofit = NetworkClient.getRetrofitClient(context!!)
+        val uploadAPIs = retrofit.create(UploadAPIs::class.java)
+        //Create a file object using file path
+        val file = File(filePath)
+        // Create a request body with file and image media type
+        val fileReqBody = RequestBody.create(MediaType.parse("image/*"), file)
+        // Create MultipartBody.Part using file request-body,file name and part name
+        val part = MultipartBody.Part.createFormData("upload", file.getName(), fileReqBody)
+        //Create request body with text description and text media type
+        val description = RequestBody.create(MediaType.parse("text/plain"), "image-type")
+        //
+        val call = uploadAPIs.uploadImage(part, description)
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+
+            }
+
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+            }
+
+        })
     }
 
     interface UploadAPIs {
