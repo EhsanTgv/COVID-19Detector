@@ -2,6 +2,7 @@ package com.taghavi.covid_19detector.apiServices
 
 import android.content.Context
 import com.taghavi.covid_19detector.fragments.HomeFragment
+import com.taghavi.covid_19detector.utilities.MyLog
 import com.taghavi.covid_19detector.utilities.NetworkClient
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -14,7 +15,7 @@ import java.io.File
 
 class RetrofitApiService(private val context: Context) {
 
-    private fun uploadToServer(filePath: String) {
+    fun uploadToServer(filePath: String) {
         val retrofit = NetworkClient.getRetrofitClient(context)
         val uploadAPIs = retrofit!!.create(HomeFragment.UploadAPIs::class.java)
         //Create a file object using file path
@@ -29,13 +30,12 @@ class RetrofitApiService(private val context: Context) {
         val call = uploadAPIs.uploadImage(part, description)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-
+                MyLog.i("RetrofitApiService -> uploadToServer -> $call")
             }
 
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-
+                MyLog.i("RetrofitApiService -> uploadToServer -> $response")
             }
-
         })
     }
 }

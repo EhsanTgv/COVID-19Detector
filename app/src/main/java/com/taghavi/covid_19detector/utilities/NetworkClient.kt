@@ -6,7 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object NetworkClient {
-    private const val BASE_URL = ""
+    private const val BASE_URL = "http://chichiapp.ir:8838/upload/x-ray/"
     private var retrofit: Retrofit? = null
     fun getRetrofitClient(context: Context?): Retrofit? {
         if (retrofit == null) {

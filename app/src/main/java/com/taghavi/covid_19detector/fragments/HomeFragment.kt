@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.taghavi.covid_19detector.R
+import com.taghavi.covid_19detector.apiServices.RetrofitApiService
 import com.taghavi.covid_19detector.apiServices.VolleyApiService
 import com.taghavi.covid_19detector.databinding.FragmentHomeBinding
 import com.taghavi.covid_19detector.utilities.*
@@ -27,6 +28,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.Retrofit
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
@@ -187,18 +189,19 @@ class HomeFragment : Fragment() {
         val contextWrapper = ContextWrapper(context)
         val directory = contextWrapper.getDir("imageDir", Context.MODE_PRIVATE)
         val file = File(directory, "image.jpg")
-        if (!file.exists()) {
-            MyLog.i(file.toString())
-            var fileOutStream: FileOutputStream? = null
-            try {
-                fileOutStream = FileOutputStream(file)
-                image.compress(Bitmap.CompressFormat.JPEG, 100, fileOutStream)
-                fileOutStream.flush()
-                fileOutStream.close()
-            } catch (e: Exception) {
-                MyLog.i(e.toString())
-            }
+        MyLog.i(file.toString())
+        var fileOutStream: FileOutputStream? = null
+        try {
+            fileOutStream = FileOutputStream(file)
+            MyLog.i("HomeFragment -> saveBitmapFile -> ${file.path}")
+            image.compress(Bitmap.CompressFormat.JPEG, 100, fileOutStream)
+            fileOutStream.flush()
+            fileOutStream.close()
+            RetrofitApiService(context!!).uploadToServer(file.path.toString())
+        } catch (e: Exception) {
+            MyLog.i(e.toString())
         }
+
     }
 
     interface UploadAPIs {
