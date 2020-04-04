@@ -201,31 +201,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun uploadToServer(filePath: String) {
-        val retrofit = NetworkClient.getRetrofitClient(context!!)
-        val uploadAPIs = retrofit.create(UploadAPIs::class.java)
-        //Create a file object using file path
-        val file = File(filePath)
-        // Create a request body with file and image media type
-        val fileReqBody = RequestBody.create(MediaType.parse("image/*"), file)
-        // Create MultipartBody.Part using file request-body,file name and part name
-        val part = MultipartBody.Part.createFormData("upload", file.getName(), fileReqBody)
-        //Create request body with text description and text media type
-        val description = RequestBody.create(MediaType.parse("text/plain"), "image-type")
-        //
-        val call = uploadAPIs.uploadImage(part, description)
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-
-            }
-
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-
-            }
-
-        })
-    }
-
     interface UploadAPIs {
         @Multipart
         @POST("/upload")
