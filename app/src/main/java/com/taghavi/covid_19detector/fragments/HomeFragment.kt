@@ -16,25 +16,25 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.Volley
 import com.taghavi.covid_19detector.R
 import com.taghavi.covid_19detector.apiServices.RetrofitApiService
 import com.taghavi.covid_19detector.apiServices.VolleyApiService
+import com.taghavi.covid_19detector.apiServices.VolleyMultipartRequest
 import com.taghavi.covid_19detector.databinding.FragmentHomeBinding
 import com.taghavi.covid_19detector.utilities.*
-import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
-import java.io.*
-import java.util.*
-
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 
 class HomeFragment : Fragment() {
     private lateinit var volleyApiService: VolleyApiService
@@ -202,6 +202,33 @@ class HomeFragment : Fragment() {
             MyLog.i(e.toString())
         }
 
+    }
+
+    private fun uploadBitmap(bitmap: Bitmap) {
+        val volleyMultipartRequest = object :
+            VolleyMultipartRequest(
+                Request.Method.POST,
+                Links.uploadUrl,
+                Response.Listener { response ->
+                    MyLog.i("HomeFragment -> uploadBitmap $response")
+                },
+                Response.ErrorListener { error ->
+                    MyLog.i("HomeFragment -> uploadBitmap $error")
+                }) {
+            override fun getByteData(): MutableMap<String, DataPart> {
+                val params = Map<String, DataPart>
+                val imageName = System.currentTimeMillis()
+                params.put("image", DartPart("$imageName.jpg", getFileDataFromDrawable(bitmap)))
+                return params
+            }
+        }
+        Volley.newRequestQueue(context).add(volleyMultipartRequest);
+    }
+
+    fun getFileDataFromDrawable(bitmap: Bitmap): ByteArray? {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream)
+        return byteArrayOutputStream.toByteArray()
     }
 
     interface UploadAPIs {
