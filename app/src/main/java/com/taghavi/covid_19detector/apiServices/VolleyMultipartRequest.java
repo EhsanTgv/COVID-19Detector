@@ -7,6 +7,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.taghavi.covid_19detector.fragments.DataPart;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -183,32 +184,5 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
         }
 
         dataOutputStream.writeBytes(lineEnd);
-    }
-
-    class DataPart {
-        private String fileName;
-        private byte[] content;
-        private String type;
-
-        public DataPart() {
-        }
-
-        DataPart(String name, byte[] data) {
-            fileName = name;
-            content = data;
-        }
-
-        String getFileName() {
-            return fileName;
-        }
-
-        byte[] getContent() {
-            return content;
-        }
-
-        String getType() {
-            return type;
-        }
-
     }
 }

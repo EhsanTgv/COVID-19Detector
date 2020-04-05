@@ -216,9 +216,9 @@ class HomeFragment : Fragment() {
                     MyLog.i("HomeFragment -> uploadBitmap $error")
                 }) {
             override fun getByteData(): MutableMap<String, DataPart> {
-                val params = Map<String, DataPart>
+                val params: HashMap<String, DataPart> = HashMap()
                 val imageName = System.currentTimeMillis()
-                params.put("image", DartPart("$imageName.jpg", getFileDataFromDrawable(bitmap)))
+                params["image"] = DataPart("$imageName.jpg", getFileDataFromDrawable(bitmap))
                 return params
             }
         }
