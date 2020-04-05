@@ -197,7 +197,7 @@ class HomeFragment : Fragment() {
             image.compress(Bitmap.CompressFormat.JPEG, 100, fileOutStream)
             fileOutStream.flush()
             fileOutStream.close()
-            RetrofitApiService(context!!).uploadToServer(file.path.toString())
+            RetrofitApiService(context!!).uploadToServer(file)
         } catch (e: Exception) {
             MyLog.i(e.toString())
         }

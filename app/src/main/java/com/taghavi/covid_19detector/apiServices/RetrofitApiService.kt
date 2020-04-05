@@ -15,11 +15,9 @@ import java.io.File
 
 class RetrofitApiService(private val context: Context) {
 
-    fun uploadToServer(filePath: String) {
+    fun uploadToServer(file: File) {
         val retrofit = NetworkClient.getRetrofitClient(context)
         val uploadAPIs = retrofit!!.create(HomeFragment.UploadAPIs::class.java)
-        //Create a file object using file path
-        val file = File(filePath)
         // Create a request body with file and image media type
         val fileReqBody = RequestBody.create(MediaType.parse("image/*"), file)
         // Create MultipartBody.Part using file request-body,file name and part name
