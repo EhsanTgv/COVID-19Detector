@@ -18,6 +18,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.android.volley.Request
 import com.android.volley.Response
+import com.android.volley.VolleyError
 import com.android.volley.toolbox.Volley
 import com.taghavi.covid_19detector.R
 import com.taghavi.covid_19detector.apiServices.RetrofitApiService
@@ -221,6 +222,15 @@ class HomeFragment : Fragment() {
                 val imageName = System.currentTimeMillis()
                 params["image"] = DataPart("$imageName.jpg", getFileDataFromDrawable(bitmap))
                 return params
+            }
+
+            override fun parseNetworkError(volleyError: VolleyError?): VolleyError {
+                var localVolleyError: VolleyError = volleyError!!
+                if (localVolleyError.networkResponse != null && localVolleyError.networkResponse.data != null) {
+                    val error = VolleyError(String(localVolleyError.networkResponse.data))
+                    localVolleyError = error
+                }
+                return localVolleyError
             }
         }
         Volley.newRequestQueue(context).add(volleyMultipartRequest);
