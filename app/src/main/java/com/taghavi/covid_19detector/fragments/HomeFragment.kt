@@ -220,7 +220,7 @@ class HomeFragment : Fragment() {
             override fun getByteData(): MutableMap<String, DataPart> {
                 val params: HashMap<String, DataPart> = HashMap()
                 val imageName = System.currentTimeMillis()
-                params["image"] = DataPart("$imageName.jpg", getFileDataFromDrawable(bitmap))
+                params["file"] = DataPart("$imageName.jpg", getFileDataFromDrawable(bitmap))
                 return params
             }
 
