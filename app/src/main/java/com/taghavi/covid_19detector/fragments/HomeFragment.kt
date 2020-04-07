@@ -20,10 +20,12 @@ import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Response
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.Volley
+import com.google.gson.Gson
 import com.taghavi.covid_19detector.R
 import com.taghavi.covid_19detector.apiServices.RetrofitApiService
 import com.taghavi.covid_19detector.apiServices.VolleyApiService
 import com.taghavi.covid_19detector.databinding.FragmentHomeBinding
+import com.taghavi.covid_19detector.models.PredictModel
 import com.taghavi.covid_19detector.utilities.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -219,7 +221,9 @@ class HomeFragment : Fragment() {
                     MyLog.i("HomeFragment -> uploadBitmap $response")
                     try {
                         val jsonObject = JSONObject(String(response.data))
-                        MyLog.i("HomeFragment -> uploadBitmap $jsonObject")
+                        val predictModel =
+                            Gson().fromJson(jsonObject.toString(), PredictModel::class.java)
+                        MyLog.i("HomeFragment -> uploadBitmap $predictModel")
                     } catch (e: JSONException) {
                         MyLog.i("HomeFragment -> uploadBitmap $e")
                     }
