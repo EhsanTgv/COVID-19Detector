@@ -96,25 +96,27 @@ class HomeFragment : Fragment() {
                     Activity.RESULT_OK -> {
                         val imageData = data!!.extras!!.get("data") as Bitmap
 
-                        if (PermissionHandler.checkPermission(
-                                context!!,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE
-                            ) &&
-                            PermissionHandler.checkPermission(
-                                context!!,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE
-                            )
-                        ) {
-                            saveBitmapFile(imageData)
-                        } else {
-                            PermissionHandler.requestForPermission(
-                                activity!!,
-                                STORAGE_PERMISSION_ID,
-                                Manifest.permission.READ_EXTERNAL_STORAGE,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE
-                            )
-                            return
-                        }
+                        uploadBitmap(imageData)
+
+//                        if (PermissionHandler.checkPermission(
+//                                context!!,
+//                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+//                            ) &&
+//                            PermissionHandler.checkPermission(
+//                                context!!,
+//                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+//                            )
+//                        ) {
+//                            saveBitmapFile(imageData)
+//                        } else {
+//                            PermissionHandler.requestForPermission(
+//                                activity!!,
+//                                STORAGE_PERMISSION_ID,
+//                                Manifest.permission.READ_EXTERNAL_STORAGE,
+//                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+//                            )
+//                            return
+//                        }
                     }
                     Activity.RESULT_CANCELED -> {
                         Toast.makeText(context, "You didn't get any shot", Toast.LENGTH_SHORT)
@@ -208,6 +210,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun uploadBitmap(bitmap: Bitmap) {
+        MyLog.i("HomeFragment -> uploadBitmap started")
         val volleyMultipartRequestJava = object :
             VolleyMultipartRequestJava(
                 Method.POST,
