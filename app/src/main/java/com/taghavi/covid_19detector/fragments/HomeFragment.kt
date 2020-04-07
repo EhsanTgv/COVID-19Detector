@@ -2,6 +2,8 @@ package com.taghavi.covid_19detector.fragments
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -213,23 +215,44 @@ class HomeFragment : Fragment() {
 
     private fun uploadBitmap(bitmap: Bitmap) {
         MyLog.i("HomeFragment -> uploadBitmap started")
+        val progressDialog = ProgressDialog(context!!)
+        progressDialog.setTitle("Please wait")
+        progressDialog.setIcon(android.R.drawable.ic_popup_sync)
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        progressDialog.setCancelable(false)
+        progressDialog.setCanceledOnTouchOutside(false)
+        progressDialog.show()
         val volleyMultipartRequestJava = object :
             VolleyMultipartRequestJava(
                 Method.POST,
                 Links.uploadUrl,
                 Response.Listener { response ->
                     MyLog.i("HomeFragment -> uploadBitmap $response")
+                    progressDialog.dismiss()
                     try {
                         val jsonObject = JSONObject(String(response.data))
                         val predictModel =
                             Gson().fromJson(jsonObject.toString(), PredictModel::class.java)
                         MyLog.i("HomeFragment -> uploadBitmap $predictModel")
+                        val alertDialog = AlertDialog.Builder(context!!)
+                        alertDialog.setTitle("Response: ")
+                        alertDialog.setMessage("Predict: ${predictModel.predict}")
+                        if (predictModel.predict == "normal") {
+                            alertDialog.setIcon(android.R.drawable.checkbox_on_background)
+                        } else {
+                            alertDialog.setIcon(android.R.drawable.ic_delete)
+                        }
+                        alertDialog.show()
                     } catch (e: JSONException) {
                         MyLog.i("HomeFragment -> uploadBitmap $e")
+                        Toast.makeText(context!!, "Parsing Error: $e", Toast.LENGTH_SHORT).show()
                     }
                 },
                 Response.ErrorListener { error ->
                     MyLog.i("HomeFragment -> uploadBitmap $error")
+                    Toast.makeText(context!!, "something went wrong, $error", Toast.LENGTH_SHORT)
+                        .show()
+                    progressDialog.dismiss()
                 }) {
             override fun getByteData(): MutableMap<String, DataPart> {
                 val params: HashMap<String, DataPart> = HashMap()
@@ -248,7 +271,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        volleyMultipartRequestJava.retryPolicy = DefaultRetryPolicy(10000, 2, 2f)
+        volleyMultipartRequestJava.retryPolicy = DefaultRetryPolicy(10000, 1, 1f)
 
         Volley.newRequestQueue(context).add(volleyMultipartRequestJava);
     }
