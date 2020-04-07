@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Response
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.Volley
@@ -213,6 +214,12 @@ class HomeFragment : Fragment() {
                 Links.uploadUrl,
                 Response.Listener { response ->
                     MyLog.i("HomeFragment -> uploadBitmap $response")
+                    try {
+                        val jsonObject = JSONObject(String(response.data))
+                        MyLog.i("HomeFragment -> uploadBitmap $jsonObject")
+                    } catch (e: JSONException) {
+                        MyLog.i("HomeFragment -> uploadBitmap $e")
+                    }
                 },
                 Response.ErrorListener { error ->
                     MyLog.i("HomeFragment -> uploadBitmap $error")
@@ -233,6 +240,9 @@ class HomeFragment : Fragment() {
                 return localVolleyError
             }
         }
+
+        volleyMultipartRequestJava.retryPolicy = DefaultRetryPolicy(10000, 2, 2f)
+
         Volley.newRequestQueue(context).add(volleyMultipartRequestJava);
     }
 
