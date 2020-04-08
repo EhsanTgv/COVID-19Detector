@@ -194,25 +194,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun saveBitmapFile(image: Bitmap) {
-        val contextWrapper = ContextWrapper(context)
-        val directory = contextWrapper.getDir("imageDir", Context.MODE_PRIVATE)
-        val file = File(directory, "image.jpg")
-        MyLog.i(file.toString())
-        var fileOutStream: FileOutputStream? = null
-        try {
-            fileOutStream = FileOutputStream(file)
-            MyLog.i("HomeFragment -> saveBitmapFile -> ${file.path}")
-            image.compress(Bitmap.CompressFormat.JPEG, 100, fileOutStream)
-            fileOutStream.flush()
-            fileOutStream.close()
-            RetrofitApiService(context!!).uploadToServer(file)
-        } catch (e: Exception) {
-            MyLog.i(e.toString())
-        }
-
-    }
-
     private fun uploadBitmap(bitmap: Bitmap) {
         MyLog.i("HomeFragment -> uploadBitmap started")
         val progressDialog = ProgressDialog(context!!)
@@ -280,14 +261,5 @@ class HomeFragment : Fragment() {
         val byteArrayOutputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream)
         return byteArrayOutputStream.toByteArray()
-    }
-
-    interface UploadAPIs {
-        @Multipart
-        @POST("/upload")
-        fun uploadImage(
-            @Part file: MultipartBody.Part,
-            @Part("name") requestBody: RequestBody
-        ): Call<ResponseBody>
     }
 }
