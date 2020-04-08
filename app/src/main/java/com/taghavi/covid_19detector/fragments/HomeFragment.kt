@@ -30,7 +30,6 @@ import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 
 class HomeFragment : Fragment() {
-    private lateinit var volleyApiService: VolleyApiService
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,15 +39,9 @@ class HomeFragment : Fragment() {
         val binding: FragmentHomeBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
 
-        initialize()
-
         events(binding)
 
         return binding.root
-    }
-
-    private fun initialize() {
-        volleyApiService = VolleyApiService(context!!)
     }
 
     private fun events(binding: FragmentHomeBinding) {
