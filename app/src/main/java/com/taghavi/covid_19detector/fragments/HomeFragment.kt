@@ -4,8 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
-import android.content.Context
-import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -24,23 +22,12 @@ import com.android.volley.VolleyError
 import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import com.taghavi.covid_19detector.R
-import com.taghavi.covid_19detector.apiServices.RetrofitApiService
-import com.taghavi.covid_19detector.apiServices.VolleyApiService
 import com.taghavi.covid_19detector.databinding.FragmentHomeBinding
 import com.taghavi.covid_19detector.models.PredictModel
 import com.taghavi.covid_19detector.utilities.*
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okhttp3.ResponseBody
 import org.json.JSONException
 import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.http.Multipart
-import retrofit2.http.POST
-import retrofit2.http.Part
 import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
 
 class HomeFragment : Fragment() {
     private lateinit var volleyApiService: VolleyApiService
