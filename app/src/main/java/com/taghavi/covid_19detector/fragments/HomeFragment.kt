@@ -81,26 +81,6 @@ class HomeFragment : Fragment() {
                         val imageData = data!!.extras!!.get("data") as Bitmap
 
                         uploadBitmap(imageData)
-
-//                        if (PermissionHandler.checkPermission(
-//                                context!!,
-//                                Manifest.permission.WRITE_EXTERNAL_STORAGE
-//                            ) &&
-//                            PermissionHandler.checkPermission(
-//                                context!!,
-//                                Manifest.permission.WRITE_EXTERNAL_STORAGE
-//                            )
-//                        ) {
-//                            saveBitmapFile(imageData)
-//                        } else {
-//                            PermissionHandler.requestForPermission(
-//                                activity!!,
-//                                STORAGE_PERMISSION_ID,
-//                                Manifest.permission.READ_EXTERNAL_STORAGE,
-//                                Manifest.permission.WRITE_EXTERNAL_STORAGE
-//                            )
-//                            return
-//                        }
                     }
                     Activity.RESULT_CANCELED -> {
                         Toast.makeText(context, "You didn't get any shot", Toast.LENGTH_SHORT)
@@ -116,25 +96,6 @@ class HomeFragment : Fragment() {
                             MediaStore.Images.Media.getBitmap(context!!.contentResolver, contentURI)
 
                         uploadBitmap(imageData)
-//                        if (PermissionHandler.checkPermission(
-//                                context!!,
-//                                Manifest.permission.WRITE_EXTERNAL_STORAGE
-//                            ) &&
-//                            PermissionHandler.checkPermission(
-//                                context!!,
-//                                Manifest.permission.WRITE_EXTERNAL_STORAGE
-//                            )
-//                        ) {
-//                            saveBitmapFile(imageData)
-//                        } else {
-//                            PermissionHandler.requestForPermission(
-//                                activity!!,
-//                                STORAGE_PERMISSION_ID,
-//                                Manifest.permission.READ_EXTERNAL_STORAGE,
-//                                Manifest.permission.WRITE_EXTERNAL_STORAGE
-//                            )
-//                            return
-//                        }
                     }
                     Activity.RESULT_CANCELED -> {
                         Toast.makeText(context, "You didn't select any photo", Toast.LENGTH_SHORT)
@@ -164,13 +125,6 @@ class HomeFragment : Fragment() {
                     ).show()
                 }
             }
-//            STORAGE_PERMISSION_ID->{
-//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    //granted
-//                } else {
-//                    //not granted
-//                }
-//            }
         }
     }
 
