@@ -30,6 +30,7 @@ import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 
 class HomeFragment : Fragment() {
+    val progressDialog = ProgressDialog(context!!)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,9 +40,15 @@ class HomeFragment : Fragment() {
         val binding: FragmentHomeBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
 
+        initialize()
+
         events(binding)
 
         return binding.root
+    }
+
+    private fun initialize() {
+        setupProgressDialog()
     }
 
     private fun events(binding: FragmentHomeBinding) {
@@ -130,12 +137,6 @@ class HomeFragment : Fragment() {
 
     private fun uploadBitmap(bitmap: Bitmap) {
         MyLog.i("HomeFragment -> uploadBitmap started")
-        val progressDialog = ProgressDialog(context!!)
-        progressDialog.setTitle("Please wait")
-        progressDialog.setIcon(android.R.drawable.ic_popup_sync)
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
-        progressDialog.setCancelable(false)
-        progressDialog.setCanceledOnTouchOutside(false)
         progressDialog.show()
         val volleyMultipartRequestJava = object :
             VolleyMultipartRequestJava(
@@ -149,15 +150,7 @@ class HomeFragment : Fragment() {
                         val predictModel =
                             Gson().fromJson(jsonObject.toString(), PredictModel::class.java)
                         MyLog.i("HomeFragment -> uploadBitmap $predictModel")
-                        val alertDialog = AlertDialog.Builder(context!!)
-                        alertDialog.setTitle("Response: ")
-                        alertDialog.setMessage("Predict: ${predictModel.predict}")
-                        if (predictModel.predict == "normal") {
-                            alertDialog.setIcon(android.R.drawable.checkbox_on_background)
-                        } else {
-                            alertDialog.setIcon(android.R.drawable.ic_delete)
-                        }
-                        alertDialog.show()
+                        setupResultDialog(predictModel)
                     } catch (e: JSONException) {
                         MyLog.i("HomeFragment -> uploadBitmap $e")
                         Toast.makeText(context!!, "Parsing Error: $e", Toast.LENGTH_SHORT).show()
@@ -189,6 +182,26 @@ class HomeFragment : Fragment() {
         volleyMultipartRequestJava.retryPolicy = DefaultRetryPolicy(10000, 1, 1f)
 
         Volley.newRequestQueue(context).add(volleyMultipartRequestJava);
+    }
+
+    private fun setupResultDialog(predictModel: PredictModel) {
+        val alertDialog = AlertDialog.Builder(context!!)
+        alertDialog.setTitle("Response: ")
+        alertDialog.setMessage("Predict: ${predictModel.predict}")
+        if (predictModel.predict == "normal") {
+            alertDialog.setIcon(android.R.drawable.checkbox_on_background)
+        } else {
+            alertDialog.setIcon(android.R.drawable.ic_delete)
+        }
+        alertDialog.show()
+    }
+
+    private fun setupProgressDialog(){
+        progressDialog.setTitle("Please wait")
+        progressDialog.setIcon(android.R.drawable.ic_popup_sync)
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        progressDialog.setCancelable(false)
+        progressDialog.setCanceledOnTouchOutside(false)
     }
 
     fun getFileDataFromDrawable(bitmap: Bitmap): ByteArray? {
