@@ -30,7 +30,7 @@ import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 
 class HomeFragment : Fragment() {
-    val progressDialog = ProgressDialog(context!!)
+    lateinit var progressDialog: ProgressDialog
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,6 +48,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun initialize() {
+        progressDialog = ProgressDialog(context!!)
         setupProgressDialog()
     }
 
@@ -196,7 +197,7 @@ class HomeFragment : Fragment() {
         alertDialog.show()
     }
 
-    private fun setupProgressDialog(){
+    private fun setupProgressDialog() {
         progressDialog.setTitle("Please wait")
         progressDialog.setIcon(android.R.drawable.ic_popup_sync)
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
