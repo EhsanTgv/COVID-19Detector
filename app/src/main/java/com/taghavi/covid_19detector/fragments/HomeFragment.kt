@@ -189,9 +189,9 @@ class HomeFragment : Fragment() {
         alertDialog.setTitle("Response: ")
         alertDialog.setMessage("Predict: ${predictModel.predict}")
         if (predictModel.predict == "normal") {
-            alertDialog.setIcon(android.R.drawable.checkbox_on_background)
+            alertDialog.setIcon(R.drawable.predict_normal)
         } else {
-            alertDialog.setIcon(android.R.drawable.ic_delete)
+            alertDialog.setIcon(R.drawable.predict_covid)
         }
         alertDialog.show()
     }
