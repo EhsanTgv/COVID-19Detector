@@ -212,7 +212,7 @@ class HomeFragment : Fragment() {
 
     private fun setupProgressDialog() {
         progressDialog.setTitle("Please wait")
-        progressDialog.setIcon(android.R.drawable.ic_popup_sync)
+        progressDialog.setIcon(R.drawable.dialog_loading_icon)
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
         progressDialog.setCancelable(false)
         progressDialog.setCanceledOnTouchOutside(false)
@@ -222,7 +222,7 @@ class HomeFragment : Fragment() {
         val dialog = AlertDialog.Builder(context)
         dialog.setTitle("About")
         dialog.setMessage("instructions")
-        dialog.setIcon(android.R.drawable.ic_menu_info_details)
+        dialog.setIcon(R.drawable.dialog_about_icon)
         dialog.show()
     }
 
