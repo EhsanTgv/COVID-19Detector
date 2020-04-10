@@ -193,7 +193,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        volleyMultipartRequestJava.retryPolicy = DefaultRetryPolicy(10000, 1, 1f)
+        volleyMultipartRequestJava.retryPolicy = DefaultRetryPolicy(20000, 1, 1f)
 
         Volley.newRequestQueue(context).add(volleyMultipartRequestJava);
     }
@@ -221,7 +221,9 @@ class HomeFragment : Fragment() {
     private fun setupAboutDialog() {
         val dialog = AlertDialog.Builder(context)
         dialog.setTitle("About")
-        dialog.setMessage("instructions")
+        dialog.setMessage("Instructions:\n" +
+                "1. select your x ray photo from camera or gallery for prediction\n" +
+                "2. wait for server's response")
         dialog.setIcon(R.drawable.dialog_about_icon)
         dialog.show()
     }
