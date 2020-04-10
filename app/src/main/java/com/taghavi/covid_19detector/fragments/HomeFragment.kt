@@ -50,6 +50,15 @@ class HomeFragment : Fragment() {
         inflater.inflate(R.menu.option_menu, menu)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.aboutFragment -> {
+                setupAboutDialog()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun initialize() {
         setHasOptionsMenu(true)
         progressDialog = ProgressDialog(context!!)
@@ -207,6 +216,14 @@ class HomeFragment : Fragment() {
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
         progressDialog.setCancelable(false)
         progressDialog.setCanceledOnTouchOutside(false)
+    }
+
+    private fun setupAboutDialog() {
+        val dialog = AlertDialog.Builder(context)
+        dialog.setTitle("About")
+        dialog.setMessage("instructions")
+        dialog.setIcon(android.R.drawable.ic_menu_info_details)
+        dialog.show()
     }
 
     fun getFileDataFromDrawable(bitmap: Bitmap): ByteArray? {
