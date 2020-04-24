@@ -235,7 +235,7 @@ class HomeFragment : Fragment() {
         dialog.setTitle("About")
         dialog.setMessage(
             "Instructions:\n" +
-                    "1. select your x ray photo from camera or gallery for prediction\n" +
+                    "1. select your x ray photo for prediction\n" +
                     "2. wait for server's response"
         )
         dialog.setIcon(R.drawable.dialog_about_icon)
