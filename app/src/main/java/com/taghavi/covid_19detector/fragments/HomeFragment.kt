@@ -61,7 +61,7 @@ class HomeFragment : Fragment() {
 
     private fun initialize() {
         setHasOptionsMenu(true)
-        progressDialog = ProgressDialog(context!!)
+        progressDialog = ProgressDialog(requireContext())
         setupProgressDialog()
     }
 
@@ -69,12 +69,16 @@ class HomeFragment : Fragment() {
         binding.homeOpenCameraButton.setOnClickListener {
             val androidVersion = Build.VERSION.SDK_INT
             if (androidVersion >= Build.VERSION_CODES.M) {
-                if (PermissionHandler.checkPermission(context!!, Manifest.permission.CAMERA)) {
+                if (PermissionHandler.checkPermission(
+                        requireContext(),
+                        Manifest.permission.CAMERA
+                    )
+                ) {
                     val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                     startActivityForResult(intent, CAMERA_ID)
                 } else {
                     PermissionHandler.requestForPermission(
-                        activity!!,
+                        requireActivity(),
                         CAMERA_PERMISSION_ID, Manifest.permission.CAMERA
                     )
                 }
@@ -114,7 +118,10 @@ class HomeFragment : Fragment() {
                     Activity.RESULT_OK -> {
                         val contentURI = data!!.data
                         val imageData =
-                            MediaStore.Images.Media.getBitmap(context!!.contentResolver, contentURI)
+                            MediaStore.Images.Media.getBitmap(
+                                requireContext().contentResolver,
+                                contentURI
+                            )
 
                         uploadBitmap(imageData)
                     }
@@ -167,12 +174,17 @@ class HomeFragment : Fragment() {
                         setupResultDialog(predictModel)
                     } catch (e: JSONException) {
                         MyLog.i("HomeFragment -> uploadBitmap $e")
-                        Toast.makeText(context!!, "Parsing Error: $e", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Parsing Error: $e", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 },
                 Response.ErrorListener { error ->
                     MyLog.i("HomeFragment -> uploadBitmap $error")
-                    Toast.makeText(context!!, "something went wrong, $error", Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        requireContext(),
+                        "something went wrong, $error",
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                     progressDialog.dismiss()
                 }) {
@@ -199,7 +211,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupResultDialog(predictModel: PredictModel) {
-        val alertDialog = AlertDialog.Builder(context!!)
+        val alertDialog = AlertDialog.Builder(requireContext())
         alertDialog.setTitle("Response: ")
         alertDialog.setMessage("Predict: ${predictModel.predict}")
         if (predictModel.predict == "normal") {
@@ -221,9 +233,11 @@ class HomeFragment : Fragment() {
     private fun setupAboutDialog() {
         val dialog = AlertDialog.Builder(context)
         dialog.setTitle("About")
-        dialog.setMessage("Instructions:\n" +
-                "1. select your x ray photo from camera or gallery for prediction\n" +
-                "2. wait for server's response")
+        dialog.setMessage(
+            "Instructions:\n" +
+                    "1. select your x ray photo from camera or gallery for prediction\n" +
+                    "2. wait for server's response"
+        )
         dialog.setIcon(R.drawable.dialog_about_icon)
         dialog.show()
     }
